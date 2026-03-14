@@ -82,7 +82,7 @@ for user in users:
 def process(name: str, age: int, scores: list[float]) -> dict[str, float]:
     return {"average": sum(scores) / len(scores)}
 
-# Optional 和 Union
+# ｜ 代替 Optional 和 Union
 def get_user(id: int) -> User | None:
     return users.get(id)
 

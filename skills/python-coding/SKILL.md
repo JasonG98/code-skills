@@ -90,9 +90,9 @@ except requests.Timeout:
 # Bad: except Exception: pass
 ```
 
-## 中文文档规则
+## 文档注释规则
 
-### 文档字符串（Google Style）
+### 使用中文文档字符串（Google Style）
 
 ```python
 def load_config(path: Path) -> dict[str, Any]:
