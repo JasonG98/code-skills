@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vibe to Arch"
+  short_description: "Reduce code and test complexity without defaulting to rewrites"
+  default_prompt: "Use $vibe-to-arch to simplify the project's most costly maintenance hotspot while preserving its behavior."

@@ -1,10 +1,11 @@
 ---
 name: daily-report
-description: 根据今日 Claude Code 历史对话生成日报。输出两个版本：详细版（供个人阅读复盘）和简洁版（可直接提交）。日报追加写入桌面"日报"文件夹，每周一个 md 文件。当用户说"生成日报"、"写日报"、"今日总结"、"daily report"、"做日报"时触发此技能。
-allowed-tools: Bash, Read, Write
+description: 根据本机 Claude Code 历史对话生成详细版和简洁版日报。用于用户要求生成日报或今日工作总结，且素材来自 Claude Code 的场景。
 ---
 
 # Daily Report — 日报生成技能
+
+需要 Python 3 和本机可读的 Claude Code 历史记录。在 Codex 中也可使用，但素材仍是 Claude Code 对话，不解析 Codex 历史。遵循用户指定的范围和输出位置；其他日期或数据源需先核实脚本支持情况，不将当日记录改标为其他日期。
 
 ## 工作流程
 
@@ -13,9 +14,10 @@ allowed-tools: Bash, Read, Write
 运行解析脚本，提取今日所有项目的 Claude Code 对话内容：
 
 ```bash
-python3 ./scripts/parse_transcripts.py
+python3 /absolute/path/to/daily-report/scripts/parse_transcripts.py
 ```
 
+- 将上面的路径替换为本 SKILL.md 所在目录下脚本的实际路径，不依赖当前工作目录
 - 如果输出为"未找到任何记录"，提示用户并终止
 - 脚本按项目分组输出用户消息和 Claude 回复，作为日报原始素材
 

@@ -1,93 +1,56 @@
 ---
 name: vibe-to-arch
-description: >
-  A full project lifecycle methodology covering two phases: fast exploration (vibe coding) 
-  followed by systematic rebuild (clean architecture). Use this skill whenever the user 
-  mentions starting a new project, wants to explore an idea without committing to architecture,
-  says "MVP is done" or "validation complete" and is thinking about a refactor or rebuild,
-  asks how to approach a large-scale refactor, wants to transition from messy prototype to 
-  clean system, mentions "vibe coding" or exploratory development, or asks about system design
-  after building a working prototype. This skill applies even when the user doesn't explicitly
-  ask for it — if they're showing signs of being between exploration and architecture, step in.
+description: Reduce accumulated complexity in an existing project when changes touch too many modules, tests break on internal refactors, or a prototype needs a maintainable next step. Language-agnostic; not for routine fixes or greenfield scaffolding.
 ---
 
 # Vibe-to-Arch
 
-## Core Philosophy
+降低下一次修改的成本，同时保留需要的行为。适用于持续开发中的项目；不假定原型必须重写，也不把文件少、测试少或目录整齐当成架构质量。
 
-Architecture-first development is a bet on knowing what you're building before you've built it.
-That bet rarely pays off. The better model:
+用户的目标、已有授权和项目约定优先。模型自行处理范围内可逆的实现选择；只有缺失信息会改变行为、范围或不可逆操作时才询问。用户只要审计时，交付建议，不修改代码。
 
-**Phase 1 — Explore:** Vibe code your way to understanding. Ship fast, break things, learn faster.
-The code is a side effect; the real output is knowledge.
+## 从维护痛点开始
 
-**Phase 2 — Graduate:** When exploration converges, stop. Distill what you learned.
-Don't carry vibe-code assumptions into the new system.
+读取与问题相关的入口、调用者、测试和项目配置，沿实际调用链扩展。先写清：
 
-**Phase 3 — Rebuild:** Now that you know what you're building, build it right.
-First principles → clean architecture → systematic implementation.
+- 哪种修改很难，具体证据在哪里。
+- 哪些对外行为、数据格式和运行约束必须保留。
+- 本轮最小改动，以及如何验证它让维护变容易。
 
-The key insight: **vibe code is the best requirements document ever written.**
-It's concrete, executable proof of what the system actually needs to do.
-The rebuild isn't a failure — it's the payoff for good exploration.
+利用已有文档和测试恢复背景，不要求用户重新描述已知需求。行数、文件数、覆盖率和测试/源码比例只是调查线索，不是拆分、合并或删除的阈值。
 
----
+## 选择最小有效干预
 
-## Stage Router
+| 观察到的问题 | 优先行动 |
+|---|---|
+| 没有具体维护障碍 | 保持现状，说明依据 |
+| 重复规则、失效分支、只转发的层 | 核实调用者后删除、内联或合并 |
+| 一个变更穿过多个不必要边界 | 围绕实际变化重新聚合职责，保留有效边界 |
+| 测试锁死私有实现、fixture 过重 | 阅读 [测试策略](references/testing.md)，先整理测试契约 |
+| 原型价值或约束仍不明确 | 做能消除该不确定性的最小实验，保留发现 |
+| 某个边界阻碍持续交付 | 阅读 [渐进迁移](references/migration.md)，替换一条可验证路径 |
+| 用户要求重写，或已有证据表明局部演进不合适 | 阅读 [渐进迁移](references/migration.md)，比较代价并落实迁移与回退 |
 
-Before doing anything, identify which phase the user is in.
+只加载当前问题需要的参考。Python 项目需要具体组织方式时，再阅读 [Python 示例](references/python.md)；其他语言遵循其生态约定。
 
-Ask (or infer from context) two questions:
+## 实施与验证
 
-1. "Have you validated the core functionality — do you know what this system needs to do?"
-2. "Can you describe the system's purpose, inputs, outputs, and constraints in one paragraph without referring to the code?"
+1. 运行已有相关检查，区分原有失败与本次回归。检查不可运行时说明原因及替代证据。
+2. 选择一个能独立验收的切片。优先复用已有行为保护；缺少关键保护时先补最小的特征测试。
+3. 完成这一处简化及它直接造成的清理：旧调用、废弃配置、无用依赖、过期文档或测试。
+4. 检查受影响调用者，运行对应检查；公共边界或影响范围广时运行完整套件。证据足够后结束本轮。
 
-| Situation | Go to |
-|-----------|-------|
-| Starting fresh / exploring an idea | `phase1-explore.md` |
-| Prototype works, considering cleanup | `phase2-graduate.md` (don't skip this) |
-| Graduation confirmed, ready to rebuild | `phase3-rebuild.md` |
-| Both questions answered "yes" | `phase2-graduate.md` → `phase3-rebuild.md` |
-| Either question answered "no" | `phase1-explore.md` |
+新增抽象应能对应一个已发生的变化需求，并说明它减少了什么重复或耦合。普通函数、模块和直接调用能清楚表达问题时，就使用它们。保留必要的事务、授权、性能和外部系统边界。
 
-**Never jump from Phase 1 directly to Phase 3.**
-Phase 2 exists specifically to prevent carrying vibe-code assumptions into the new system.
+TDD 可用于明确的新行为和缺陷修复；纯重构在已有行为测试保持通过的前提下进行，不为制造一次红灯而复制测试。对纯文档、格式或配置改动使用相应验证，不机械新增单元测试。遵守项目明确要求的测试流程。
 
----
+## 交付与停止
 
-## Reference Files
+交付可审查的修改，并简要说明：
 
-Load only the file for the current phase — not all three upfront:
+- 改了什么，以及对应的维护痛点。
+- 保留了哪些行为，哪些代码或测试被删减，依据是什么。
+- 实际运行的验证及结果；无法验证的部分。
+- 仍有必要复杂性时，说明为什么保留它。
 
-- `phase1-explore.md` — Strategic exploration: how to vibe code with intent
-- `phase2-graduate.md` — Graduation: assessing readiness + spec extraction
-- `phase3-rebuild.md` — Rebuild: first principles → architecture → implementation
-
----
-
-## Principles (Always Apply Across All Phases)
-
-**1. Wrong fast beats right slow in Phase 1.**
-Premature correctness is just procrastination with good posture.
-
-**2. Knowledge has an expiration date.**
-The gap between Phase 1 and Phase 3 should be days, not months.
-Context decays. LEARNINGS.md exists to fight this.
-
-**3. Spec extraction before architecture.**
-Phase 3 starts by distilling what Phase 1 proved — not by designing from scratch.
-The vibe code is a research artifact, not a scaffold to build on.
-
-**4. Stop points are mandatory in Phase 3.**
-This is a collaborative process. Claude surfaces decisions; humans confirm them.
-No unilateral architecture choices, no silent workarounds.
-
-**5. Strategic messiness.**
-Not all Phase 1 code deserves equal care.
-Core logic and data models: leave traces.
-Scripts, UI, experiments: throw away freely.
-
-**6. Rebuilds can be partial.**
-Not every refactor needs to be a full teardown.
-A single module can be rebuilt while others remain.
-This skill applies at any granularity.
+当选定痛点已消除、契约检查通过、受影响的旧路径已处理，就停止。没有净收益也可以保持现状。小改动在回复或现有任务记录中解释即可；跨边界迁移才更新必要的设计记录，避免为每轮整理生成全套文档。
