@@ -7,6 +7,7 @@
 | Skill | 适用场景 |
 |---|---|
 | [vibe-to-arch](skills/vibe-to-arch/SKILL.md) | 已有项目的架构、代码或测试维护成本持续增加 |
+| [converge-to-core](skills/converge-to-core/SKILL.md) | 将 AI/ML 实验仓库精简到核心算法与流程，允许不兼容旧数据和 checkpoint |
 | [python-coding](skills/python-coding/SKILL.md) | Python 实现与审查中的个人约定 |
 | [python-project](skills/python-project/SKILL.md) | uv 项目的环境、依赖、打包与 CI |
 | [flat-diagram-style](skills/flat-diagram-style/SKILL.md) | 跨领域扁平图解风格，按需求选择格式；附 PNG 工具 |
