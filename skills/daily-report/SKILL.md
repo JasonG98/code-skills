@@ -1,6 +1,7 @@
 ---
 name: daily-report
 description: 根据本机 Claude Code 历史对话生成详细版和简洁版日报。用于用户要求生成日报或今日工作总结，且素材来自 Claude Code 的场景。
+disable-model-invocation: true
 ---
 
 # Daily Report — 日报生成技能

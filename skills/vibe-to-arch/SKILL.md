@@ -1,6 +1,7 @@
 ---
 name: vibe-to-arch
 description: Reduce accumulated complexity in an existing project when changes touch too many modules, tests break on internal refactors, or a prototype needs a maintainable next step. Language-agnostic; not for routine fixes or greenfield scaffolding.
+disable-model-invocation: true
 ---
 
 # Vibe-to-Arch

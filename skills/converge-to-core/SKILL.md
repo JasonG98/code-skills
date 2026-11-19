@@ -1,6 +1,7 @@
 ---
 name: converge-to-core
 description: 把越写越重的 AI/ML 实验仓库整体重构成只保留核心功能的最简结构。允许破坏性重构，不兼容旧数据、模型和 checkpoint，只保住核心算法本身。用于整库精简、去掉历史实验分支和废弃变体；需要兼容旧产物的保守清理、只打磨最近几行改动时不适用。
+disable-model-invocation: true
 ---
 
 # Converge to Core

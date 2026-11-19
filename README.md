@@ -12,6 +12,9 @@
 | [python-project](skills/python-project/SKILL.md) | uv 项目的环境、依赖、打包与 CI |
 | [flat-diagram-style](skills/flat-diagram-style/SKILL.md) | 跨领域扁平图解风格，按需求选择格式；附 PNG 工具 |
 | [daily-report](skills/daily-report/SKILL.md) | 从本机 Claude Code 历史生成日报；需要 Python 3 和历史记录 |
+| [think](skills/think/SKILL.md) | 第一性原理、质疑提问本身、二阶影响、跨领域、反方视角 |
+| [align](skills/align/SKILL.md) | 开局先问清目标，再给三版方案供选择 |
+| [retro](skills/retro/SKILL.md) | 复盘近期 Bug 与返工，找共同根因并沉淀成规则或自动化 |
 
 `vibe-to-arch` 不会因普通修复或新建项目自动要求重建。它优先找具体维护障碍，复用现有行为测试，然后执行一个可验证的简化切片。
 
@@ -35,24 +38,19 @@ CLAUDE.md                # 导入同一份约定
 
 ## 安装到本机
 
-Codex 使用 `~/.agents/skills/<name>/`，Claude Code 使用 `~/.claude/skills/<name>/`；两者都支持技能目录软链接。[Codex 文档](https://learn.chatgpt.com/docs/build-skills) · [Claude Code 文档](https://code.claude.com/docs/en/skills)
+Codex 使用 `~/.agents/skills/<name>/`，Claude Code 使用 `~/.claude/skills/<name>/`。[Vercel `skills` CLI](https://github.com/vercel-labs/skills) 可一次装到两者，并从本仓库的 `skills/` 自动发现技能。
 
-在仓库根目录运行以下命令，为所需技能建立链接。示例只安装 `vibe-to-arch`；可按需替换名称。
+在仓库根目录运行以下命令。示例只安装 `vibe-to-arch`；用 `--skill` 重复指定或写 `'*'` 安装全部。
 
 ```bash
-skills_repo="$(pwd)"
-skill_name="vibe-to-arch"
-for skills_target in "$HOME/.agents/skills" "$HOME/.claude/skills"; do
-  mkdir -p "$skills_target"
-  if [ -e "$skills_target/$skill_name" ] || [ -L "$skills_target/$skill_name" ]; then
-    printf '保留已有安装，请先检查：%s\n' "$skills_target/$skill_name"
-  else
-    ln -s "$skills_repo/skills/$skill_name" "$skills_target/$skill_name"
-  fi
-done
+bunx skills@latest add https://github.com/JasonG98/code-skills \
+  --skill vibe-to-arch \
+  -g -a claude-code -a codex -y
 ```
 
-已有实体副本需先比较、备份，再换成指向此仓库的链接；这段命令不会更新旧副本。不要同时在多个发现目录放不同版本的同名技能。仓库移动后需更新链接。Windows 或不支持软链接的环境可复制整个技能目录，但要自行同步更新。
+`-g` 装到用户级（去掉则装进当前项目的 `.claude/skills/`）。已安装的技能用 `bunx skills@latest update -g` 更新，`bunx skills@latest ls -g` 查看，`bunx skills@latest remove -g <name>` 卸载。
+
+远程安装会记录 commit，改完仓库要先推送再 `update`。本机调试可直接用本地路径，但那是复制而非链接，同样需要 `update` 才会同步。不要同时在多个发现目录放不同版本的同名技能。
 
 项目级安装则使用目标项目的 `.agents/skills/<name>/` 和 `.claude/skills/<name>/`；需要团队共享时，提交可移植的文件，而非本机绝对路径链接。
 
